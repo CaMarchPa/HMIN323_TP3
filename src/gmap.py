@@ -392,7 +392,6 @@ class GMap:
         for d in self.orbit(dart, alphas):
             neighbor = self.alpha(d, degree)
             for d_index in alphas:
-                if self.alpha(d, d_index) not in results:
+                if self.alpha(neighbor, d_index) not in results:
                     results.append(d)
         return results
-    
