@@ -384,3 +384,7 @@ class GMap:
             pgl.Viewer.add(s)
         else : 
             pgl.Viewer.display(s)
+
+    def adjacent_cells(self, dart, degree):
+        for d in self.orbit(dart, []):
+            
