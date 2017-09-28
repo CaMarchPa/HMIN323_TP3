@@ -4,17 +4,17 @@ import numpy as np
 
 class GMap:
     def __init__(self, degree=2):
-        """ 
-        Constructor 
+        """
+        Constructor
         """
 
         self.maxid = 0
         self.alphas = { 0 : {}, 1 : {}, 2 : {} }
         self.positions = {}
 
-    def darts(self): 
-        """ 
-        Return a list of id representing the darts of the structure 
+    def darts(self):
+        """
+        Return a list of id representing the darts of the structure
         """
         return self.alphas[0].keys()
 
@@ -23,23 +23,23 @@ class GMap:
         return self.alphas[degree][dart]
 
     def alpha_composed(self, list_of_alpha_value, dart):
-        """ 
-        Return the application of a composition of alphas on dart 
+        """
+        Return the application of a composition of alphas on dart
         """
         for alpha in list_of_alpha_value:
             dart = self.alpha(alpha, dart)
         return dart
 
     def is_free(self, degree, dart):
-        """ 
-        Test if dart is free for alpha_degree (if it is a fixed point) 
+        """
+        Test if dart is free for alpha_degree (if it is a fixed point)
         """
         return self.alpha(degree,dart) == dart
 
     def add_dart(self):
-        """ 
-        Create a new dart and return its id. 
-        Set its alpha_i to itself (fixed points) 
+        """
+        Create a new dart and return its id.
+        Set its alpha_i to itself (fixed points)
         """
         dart = self.maxid
         self.maxid += 1
@@ -48,9 +48,9 @@ class GMap:
         return dart
 
     def is_valid(self):
-        """ 
-        Test the validity of the structure. 
-        Check if there is pending dart for alpha_0 and alpha_1 (fixed point) 
+        """
+        Test the validity of the structure.
+        Check if there is pending dart for alpha_0 and alpha_1 (fixed point)
         """
         for dart, alpha_0_of_dart in self.alphas[0].items():
              if dart == alpha_0_of_dart : return False # no fixed point
@@ -65,8 +65,8 @@ class GMap:
 
         return True
 
-    def link_darts(self,degree, dart1, dart2): 
-        """ 
+    def link_darts(self,degree, dart1, dart2):
+        """
         Link the two darts with a relation alpha_degree
         """
         assert self.is_free(degree,dart1) and self.is_free(degree,dart2)
@@ -74,9 +74,9 @@ class GMap:
         self.alphas[degree][dart2] = dart1
 
     def print_alphas(self):
-        """ 
+        """
         Print for each dart, the value of the different alpha applications.
-        """ 
+        """
         try:
             from colorama import Style, Fore
         except:
@@ -86,14 +86,14 @@ class GMap:
         else:
             print "d     α0  α1  α2"
             for d in self.darts():
-                print d," | ",Fore.MAGENTA+str(self.alpha(0,d))," ",Fore.GREEN+str(self.alpha(1,d))," ",Fore.BLUE+str(self.alpha(2,d))," ",Style.RESET_ALL 
+                print d," | ",Fore.MAGENTA+str(self.alpha(0,d))," ",Fore.GREEN+str(self.alpha(1,d))," ",Fore.BLUE+str(self.alpha(2,d))," ",Style.RESET_ALL
 
 
     def orbit(self, dart, list_of_alpha_value):
-        """ 
+        """
         Return the orbit of dart using a list of alpha relation.
         Example of use : gmap.orbit(0,[0,1]).
-        In Python, you can use the set structure to process only once all darts of the orbit.  
+        In Python, you can use the set structure to process only once all darts of the orbit.
         """
         orbit = []
         marked = set([])
@@ -133,8 +133,8 @@ class GMap:
         """
         Sew two elements of degree 'degree' that start at dart1 and dart2.
         Determine first the orbits of dart to sew and heck if they are compatible.
-        Sew pairs of corresponding darts, and if they have different embedding 
-        positions, merge them. 
+        Sew pairs of corresponding darts, and if they have different embedding
+        positions, merge them.
         """
         if degree == 1:
             self.link_darts(1, dart1, dart2)
@@ -157,13 +157,13 @@ class GMap:
 
 
     def elements(self, degree):
-        """ 
-        Return one dart per element of degree. For this, consider all darts as initial set S. 
-        Take the first dart d, remove from the set all darts of the orbit starting from d and 
-        corresponding to element of degree degree. Take then next element from set S and do the 
-        same until S is empty. 
+        """
+        Return one dart per element of degree. For this, consider all darts as initial set S.
+        Take the first dart d, remove from the set all darts of the orbit starting from d and
+        corresponding to element of degree degree. Take then next element from set S and do the
+        same until S is empty.
         Return all darts d that were used. """
-        
+
         elements = []
         darts = set(self.darts())
 
@@ -192,10 +192,10 @@ class GMap:
         results = []
 
         alphas = range(3)
-        alphas.remove(degree) 
+        alphas.remove(degree)
 
         incidentalphas = range(3)
-        incidentalphas.remove(incidentdegree) 
+        incidentalphas.remove(incidentdegree)
 
         marked = set()
 
@@ -205,20 +205,20 @@ class GMap:
                 marked |= set(self.orbit(d, incidentalphas))
 
         return results
-        
+
 
     def insert_edge(self, dart):
-        """ 
+        """
         Insert an edge at the point represented by dart.
         Return a dart corresponding to the dandling edge end.
         """
 
         dart1 = self.alpha(1, dart)
         newdarts = [self.add_dart() for i in xrange(4)]
-        
+
         self.link_darts(0, newdarts[0], newdarts[1])
         self.link_darts(0, newdarts[3], newdarts[2])
-        
+
         self.link_darts(2, newdarts[0], newdarts[3])
         self.link_darts(2, newdarts[1], newdarts[2])
 
@@ -233,7 +233,7 @@ class GMap:
 
     def split_face(self, dart1, dart2=None):
         """
-        Split face by inserting an edge between dart1 and dart2 
+        Split face by inserting an edge between dart1 and dart2
         """
 
         if dart2 is None:
@@ -252,8 +252,8 @@ class GMap:
 
 
     def split_edge(self, dart):
-        """ 
-        Operator to split an edge. 
+        """
+        Operator to split an edge.
         Return a dart corresponding to the new points
         """
         orbit1 = self.orbit(dart,[2])
@@ -261,14 +261,14 @@ class GMap:
 
         newdart1 = [self.add_dart() for i in orbit1]
         newdart2 = [self.add_dart() for i in orbit2]
-        
+
         for d, nd in zip(orbit1+orbit2, newdart1+newdart2):
             self.alphas[0][d] = nd
             self.alphas[0][nd] = d
-        
+
         for nd1, nd2 in zip(newdart1, newdart2):
             self.link_darts(1, nd1, nd2)
-        
+
         for nd in newdart1+newdart2:
             if self.is_free(2, nd) and not self.is_free(2, self.alpha(0, nd)):
                 self.link_darts(2,nd, self.alpha(0,self.alpha(2,self.alpha(0,nd))))
@@ -277,8 +277,8 @@ class GMap:
 
 
     def get_embedding_dart(self, dart, propertydict ):
-        """ 
-        Check if a dart of the orbit representing the vertex has already been 
+        """
+        Check if a dart of the orbit representing the vertex has already been
         associated with a value in propertydict. If yes, return this dart, else
         return the dart passed as argument.
         """
@@ -290,7 +290,7 @@ class GMap:
 
     def get_position(self, dart):
         """
-        Retrieve the coordinates associated to the vertex <alpha_1, alpha_2>(dart) 
+        Retrieve the coordinates associated to the vertex <alpha_1, alpha_2>(dart)
         """
         return self.positions.get(self.get_embedding_dart(dart,self.positions))
 
@@ -300,7 +300,7 @@ class GMap:
         Associate coordinates with the vertex <alpha_1,alpha_2>(dart)
         """
         self.positions[self.get_embedding_dart(dart,self.positions)] = position
-    
+
 
     def display(self, color = [190,205,205], add = False):
         from openalea.plantgl.all import Scene, Shape, Material, FaceSet, Viewer
@@ -318,9 +318,9 @@ class GMap:
                 else:
                         mat = Material(tuple(color),diffuse=0.25)
                 s.add(Shape(FaceSet(positions, [range(len(positions))]) , mat, facedart ))
-        if add : 
+        if add :
             Viewer.add(s)
-        else : 
+        else :
             Viewer.display(s)
 
 
@@ -380,11 +380,19 @@ class GMap:
             alpha_2_points += [0.33*dart_points[self.alpha(2,dart)][0] + 0.66*dart_points[self.alpha(2,dart)][1]]
             s += pgl.Shape(pgl.Polyline(alpha_2_points,width=5),blue)
 
-        if add : 
+        if add :
             pgl.Viewer.add(s)
-        else : 
+        else :
             pgl.Viewer.display(s)
 
     def adjacent_cells(self, dart, degree):
-        for d in self.orbit(dart, []):
-            
+        results = []
+        alphas = range(3)
+        alphas.remove(degree)
+        for d in self.orbit(dart, alphas):
+            neighbor = self.alpha(d, degree)
+            for d_index in alphas:
+                if self.alpha(d, d_index) not in results:
+                    results.append(d)
+        return results
+    
